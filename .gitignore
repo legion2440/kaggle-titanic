@@ -2,14 +2,3 @@
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
-
-models/
-research/clean_autoresearch/runs/
-
-reports/legacy_experiment_mapping.md
-
-# Generated/legacy submissions are excluded by default.
-# Explicitly unignore only selected final artifacts.
-submissions/*.csv
-!submissions/.gitkeep
-!submissions/submission_base1_clean_leader.csv
