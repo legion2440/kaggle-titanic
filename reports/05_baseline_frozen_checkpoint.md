@@ -308,4 +308,3 @@ These candidates are included as strong raw baseline candidates from `04_baselin
 - No tuning, threshold change, model parameter change, feature change, or PassengerId correction was made after public results.
 - `raw_tabular / GradientBoostingClassifier` is the current clean public baseline leader.
 - RF default is rejected for the next clean feature-check lane based on this checkpoint.
-- This does not use old repo history and does not compare against old repo results.

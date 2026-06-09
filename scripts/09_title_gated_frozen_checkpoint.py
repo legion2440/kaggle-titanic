@@ -541,7 +541,6 @@ def _build_report(
         "- Current clean public baseline leader remains `raw_tabular / GradientBoostingClassifier` with `0.79665`.",
         "- Broad Title lane is closed for now.",
         "- Narrow Title-derived child signal is deferred to a later Age/AgeBand/Child check.",
-        "- This does not use old repo history and does not compare against old repo results.",
     ]
 
     if generated_row["status"] != "PASS":

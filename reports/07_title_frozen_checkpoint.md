@@ -161,4 +161,3 @@ Only active `raw_plus_title` lanes are promoted to frozen submission files.
 - `raw_plus_title / SVC` is checkpointed with no gain.
 - `raw_plus_title / GradientBoostingClassifier` and `raw_plus_title / CatBoostClassifier` are rejected for public transfer.
 - `Title` signal is moved to `RETEST_FOR_GATING`.
-- This does not use old repo history and does not compare against old repo results.

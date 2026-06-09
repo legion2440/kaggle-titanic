@@ -502,7 +502,7 @@ def _summary_row(
         "test_changed_passenger_ids": _id_list(EXPECTED_TEST_IDS),
         "submission_file": _relative(SUBMISSION_PATH),
         "frozen_public_score": SUBGROUP_PUBLIC_SCORE,
-        "public_status": "CURRENT_CLEAN_LEADER",
+        "public_status": "CURRENT_PUBLIC_LEADER",
     }
 
 
@@ -696,7 +696,7 @@ def _build_report(
             "",
             f"- submission: `{SUBMISSION_PATH.name}`",
             f"- public score: `{SUBGROUP_PUBLIC_SCORE}`",
-            "- status: `CURRENT_CLEAN_LEADER`",
+            "- status: `CURRENT_PUBLIC_LEADER`",
             "- Public score is recorded only after this subgroup was already identified by OOF/group diagnostics.",
             "",
             "## Reading boundary",
