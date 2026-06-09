@@ -12,7 +12,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -22,7 +22,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.config import RANDOM_STATE, REPORTS_DIR, TARGET, TRAIN_PATH
 from scripts.features import RAW_TABULAR
-from scripts.preprocessing import make_preprocessor
+from scripts.preprocessing import CATEGORICAL_FEATURES, make_preprocessor
+
+# AgeBucket is constructed locally for this check only — register it as categorical
+# so make_preprocessor can route it to OHE (same pattern as scripts 17/18).
+if "AgeBucket" not in CATEGORICAL_FEATURES:
+    CATEGORICAL_FEATURES.append("AgeBucket")
 
 
 REPORT_PATH = REPORTS_DIR / "11_agebucket_feature_check.md"
@@ -55,11 +60,6 @@ CSV_COLUMNS = [
     "feature_set",
     "cv_mean",
     "cv_std",
-    "fold_1",
-    "fold_2",
-    "fold_3",
-    "fold_4",
-    "fold_5",
     "oof_accuracy",
     "pred_1_rate",
     "base_feature_set",
@@ -172,8 +172,8 @@ def _evaluate_feature_sets(
     resolved_models: dict[str, dict[str, Any]],
 ) -> tuple[dict[tuple[str, str], dict[str, object]], bool]:
     y = train[TARGET].astype(int)
-    splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-    splits = list(splitter.split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
     results: dict[tuple[str, str], dict[str, object]] = {}
     all_passed = True
 
@@ -201,7 +201,7 @@ def _evaluate_feature_sets(
                 oof = np.full(len(train), -1, dtype=int)
                 x = train[feature_names]
 
-                for train_idx, valid_idx in splits:
+                for i, (train_idx, valid_idx) in enumerate(splits):
                     model, _, build_error = _build_model(spec)
                     if model is None:
                         raise RuntimeError(build_error)
@@ -213,7 +213,8 @@ def _evaluate_feature_sets(
                     )
                     estimator.fit(x.iloc[train_idx], y.iloc[train_idx])
                     fold_pred = estimator.predict(x.iloc[valid_idx]).astype(int)
-                    oof[valid_idx] = fold_pred
+                    if i < 5:
+                        oof[valid_idx] = fold_pred
                     fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
 
                 if (oof < 0).any():
@@ -279,11 +280,6 @@ def _comparison_row(
         "feature_set": feature_set,
         "cv_mean": _round_float(candidate["cv_mean"]),
         "cv_std": _round_float(candidate["cv_std"]),
-        "fold_1": _round_float(fold_scores[0]),
-        "fold_2": _round_float(fold_scores[1]),
-        "fold_3": _round_float(fold_scores[2]),
-        "fold_4": _round_float(fold_scores[3]),
-        "fold_5": _round_float(fold_scores[4]),
         "oof_accuracy": _round_float(candidate["oof_accuracy"]),
         "pred_1_rate": _round_float(candidate["pred_1_rate"]),
         "base_feature_set": base_feature_set,
@@ -474,7 +470,7 @@ def _build_report(
         "",
         f"- overall status: `{status}`",
         f"- rows: `{len(train)}`",
-        f"- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state={RANDOM_STATE})`",
+        f"- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state={RANDOM_STATE})`",
         "",
         _markdown_table(comparison_rows, CSV_COLUMNS),
         "",

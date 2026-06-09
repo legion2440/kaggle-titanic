@@ -24,7 +24,7 @@
 | variant | oof_accuracy | pred_1_count | pred_1_rate | changed_rows_vs_raw_tabular | rescue | kill | net | test_changed_rows_vs_raw_tabular | status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | raw_tabular | 0.82716 | 294 | 0.329966 | 0 | 0 | 0 | 0 | 0 | REFERENCE_REPRODUCED |
-| raw_plus_cabinknown | 0.838384 | 296 | 0.332211 | 30 | 20 | 10 | 10 | 19 | REFERENCE_REPRODUCED |
+| raw_plus_cabinknown | 0.839506 | 297 | 0.333333 | 31 | 21 | 10 | 11 | 19 | REFERENCE_REPRODUCED |
 
 ## Subgroup rule
 
@@ -44,7 +44,7 @@ if (
 
 | model_class | package | package_version | preprocessing_mode | explicit_technical_params | actual_resolved_params | parameter_adjustments | error |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | scikit-learn | 1.9.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "deprecated", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
+| GradientBoostingClassifier | scikit-learn | 1.8.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "friedman_mse", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
 
 ## OOF table
 

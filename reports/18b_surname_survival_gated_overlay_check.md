@@ -45,15 +45,15 @@ The old Step 18B `SurnameSurvivalDelta` fallback-neutral check still trained `Gr
 
 ## Baseline metrics
 
-| variant | model_or_candidate | features | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | test_changed_rows | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | diagnostic_status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| raw_tabular | GradientBoostingClassifier | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 0.0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 141 | 0.337321 |  |
+| variant | model_or_candidate | features | cv_mean | cv_std | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | test_changed_rows | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | diagnostic_status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| raw_tabular | GradientBoostingClassifier | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.825701 | 0.021513 | 0.82716 | 0.0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 141 | 0.337321 |  |
 
 ## Overlay candidate metrics
 
-| variant | model_or_candidate | features | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | test_changed_rows | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | diagnostic_status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| raw_tabular_plus_surname_survival_gated_overlay | post-model gated overlay | raw_tabular baseline predictions + SurnameSurvival gated overlay | 0.814833 | 0.028956 | 0.798883 | 0.859551 | 0.780899 | 0.797753 | 0.837079 | 0.814815 | -0.012346 | 17 | 8 | 9 | 3 | 14 | -11 | 22 | 13 | 9 | 145 | 0.34689 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
+| variant | model_or_candidate | features | cv_mean | cv_std | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | test_changed_rows | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | diagnostic_status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| raw_tabular_plus_surname_survival_gated_overlay | post-model gated overlay | raw_tabular baseline predictions + SurnameSurvival gated overlay | 0.812579 | 0.021729 | 0.814815 | -0.012346 | 17 | 8 | 9 | 3 | 14 | -11 | 22 | 13 | 9 | 145 | 0.34689 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
 
 ## Required metric summary
 
@@ -74,7 +74,7 @@ The old Step 18B `SurnameSurvivalDelta` fallback-neutral check still trained `Gr
 
 | model_class | package | package_version | preprocessing_mode | explicit_technical_params | actual_resolved_params | parameter_adjustments | error |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | scikit-learn | 1.9.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "deprecated", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
+| GradientBoostingClassifier | scikit-learn | 1.8.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "friedman_mse", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
 
 ## Safety invariant
 

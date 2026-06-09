@@ -12,6 +12,7 @@ train_oof,raw_plus_cabinknown,340,0,1,0,False,True,rescue,male,1,45.0,0,0,35.5,T
 train_oof,raw_plus_cabinknown,420,0,0,1,True,False,kill,female,3,10.0,0,2,24.15,,0,S
 train_oof,raw_plus_cabinknown,431,1,0,1,False,True,rescue,male,1,28.0,0,0,26.55,C52,1,S
 train_oof,raw_plus_cabinknown,448,1,1,0,True,False,kill,male,1,34.0,0,0,26.55,,0,S
+train_oof,raw_plus_cabinknown,484,1,0,1,False,True,rescue,female,3,63.0,0,0,9.5875,,0,S
 train_oof,raw_plus_cabinknown,485,1,0,1,False,True,rescue,male,1,25.0,1,0,91.0792,B49,1,C
 train_oof,raw_plus_cabinknown,493,0,1,0,False,True,rescue,male,1,55.0,0,0,30.5,C30,1,S
 train_oof,raw_plus_cabinknown,531,1,0,1,False,True,rescue,female,2,2.0,1,1,26.0,,0,S

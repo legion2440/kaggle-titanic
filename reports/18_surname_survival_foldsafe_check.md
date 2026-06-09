@@ -37,25 +37,25 @@ Current public leader remains frozen: `submissions/submission_16b_gb_cabinknown_
 
 | model_class | package | package_version | preprocessing_mode | explicit_technical_params | actual_resolved_params | parameter_adjustments | error |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | scikit-learn | 1.9.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "deprecated", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
+| GradientBoostingClassifier | scikit-learn | 1.8.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "friedman_mse", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
 
 ## OOF / test metrics
 
-| model_name | variant | candidate_id | feature_set | features | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_changed_pct | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | oof_pred_1_count | oof_pred_1_rate | oof_pred_1_rate_delta_vs_raw_tabular | test_changed_rows | test_changed_pct | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | test_pred_1_rate_delta_vs_raw_tabular | train_survival_rate | decision |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | raw_tabular | raw_tabular__GradientBoostingClassifier | raw_tabular | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 0.0 | 0 | 0.0 | 0 | 0 | 0 | 0 | 0 | 294 | 0.329966 | 0.0 | 0 | 0.0 | 0 | 0 | 141 | 0.337321 | 0.0 | 0.383838 |  |
-| GradientBoostingClassifier | raw_tabular_plus_surname_survival | raw_tabular_plus_surname_survival__GradientBoostingClassifier | raw_tabular_plus_surname_survival | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare, SurnameSurvival | 0.814808 | 0.02492 | 0.821229 | 0.831461 | 0.792135 | 0.780899 | 0.848315 | 0.814815 | -0.012346 | 79 | 8.866442 | 56 | 23 | 34 | 45 | -11 | 327 | 0.367003 | 0.037037 | 40 | 9.569378 | 27 | 13 | 155 | 0.370813 | 0.033493 | 0.383838 | REJECT_TRAIN_SIDE |
+| model_name | variant | candidate_id | feature_set | features | cv_mean | cv_std | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_changed_pct | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | oof_pred_1_count | oof_pred_1_rate | oof_pred_1_rate_delta_vs_raw_tabular | test_changed_rows | test_changed_pct | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | test_pred_1_rate_delta_vs_raw_tabular | train_survival_rate | decision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GradientBoostingClassifier | raw_tabular | raw_tabular__GradientBoostingClassifier | raw_tabular | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.825701 | 0.021513 | 0.82716 | 0.0 | 0 | 0.0 | 0 | 0 | 0 | 0 | 0 | 294 | 0.329966 | 0.0 | 0 | 0.0 | 0 | 0 | 141 | 0.337321 | 0.0 | 0.383838 |  |
+| GradientBoostingClassifier | raw_tabular_plus_surname_survival | raw_tabular_plus_surname_survival__GradientBoostingClassifier | raw_tabular_plus_surname_survival | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare, SurnameSurvival | 0.817176 | 0.021956 | 0.813692 | -0.013468 | 80 | 8.978676 | 56 | 24 | 34 | 46 | -12 | 326 | 0.365881 | 0.035915 | 40 | 9.569378 | 27 | 13 | 155 | 0.370813 | 0.033493 | 0.383838 | REJECT_TRAIN_SIDE |
 
 ## Required metric summary
 
 - baseline OOF accuracy: `0.82716`
-- candidate OOF accuracy: `0.814815`
-- delta vs raw_tabular: `-0.012346`
-- candidate CV mean/std: `0.814808` / `0.02492`
-- OOF changed rows count: `79`
+- candidate OOF accuracy: `0.813692`
+- delta vs raw_tabular: `-0.013468`
+- candidate CV mean/std: `0.817176` / `0.021956`
+- OOF changed rows count: `80`
 - OOF 0 -> 1 count: `56`
-- OOF 1 -> 0 count: `23`
-- rescue / kill / net: `34` / `45` / `-11`
+- OOF 1 -> 0 count: `24`
+- rescue / kill / net: `34` / `46` / `-12`
 - test changed rows count: `40`
 - test 0 -> 1 count: `27`
 - test 1 -> 0 count: `13`
@@ -64,13 +64,13 @@ Current public leader remains frozen: `submissions/submission_16b_gb_cabinknown_
 
 ## OOF changed-row audit
 
-- changed PassengerIds: `3 9 26 35 41 50 80 101 114 115 120 133 140 142 143 149 156 166 173 183 217 234 242 255 262 263 296 316 329 340 347 348 363 374 376 405 416 424 431 432 435 448 451 475 485 490 504 506 513 531 535 542 543 545 555 565 568 573 579 600 605 611 613 622 633 672 685 697 808 814 831 840 849 853 856 868 883 889 890`
+- changed PassengerIds: `3 9 26 35 41 50 80 101 114 115 120 133 140 142 143 149 156 166 173 183 217 234 242 255 262 263 296 316 329 340 347 348 363 374 376 405 416 424 431 432 435 448 451 475 485 490 504 506 513 531 535 542 543 545 555 565 568 573 579 600 605 611 613 622 633 672 685 697 752 808 814 831 840 849 853 856 868 883 889 890`
 
 | diff_direction | rescue_or_kill | count | PassengerIds |
 | --- | --- | --- | --- |
 | upshift_0_to_1 | kill | 33 | 41 50 101 114 115 120 133 140 149 183 255 263 363 405 416 424 451 475 504 535 542 543 565 579 611 672 685 697 808 849 868 883 889 |
 | upshift_0_to_1 | rescue | 23 | 3 9 26 80 142 143 217 234 242 262 316 329 348 431 432 485 531 555 605 613 622 831 856 |
-| downshift_1_to_0 | kill | 12 | 166 173 347 376 448 490 513 573 600 633 840 890 |
+| downshift_1_to_0 | kill | 13 | 166 173 347 376 448 490 513 573 600 633 752 840 890 |
 | downshift_1_to_0 | rescue | 11 | 35 156 296 340 374 435 506 545 568 814 853 |
 
 OOF row-level audit:
@@ -145,6 +145,7 @@ OOF row-level audit:
 | train_oof | 672 | 0 | 0 | 1 | upshift_0_to_1 | kill | male | 1 | 31.0 | 1 | 0 | 52.0 | S | Davidson | 0.384292 | 0 |
 | train_oof | 685 | 0 | 0 | 1 | upshift_0_to_1 | kill | male | 2 | 60.0 | 1 | 1 | 39.0 | S | Brown | 0.615182 | 3 |
 | train_oof | 697 | 0 | 0 | 1 | upshift_0_to_1 | kill | male | 3 | 44.0 | 0 | 0 | 8.05 | S | Kelly | 0.614642 | 3 |
+| train_oof | 752 | 1 | 1 | 0 | downshift_1_to_0 | kill | male | 3 | 6.0 | 0 | 1 | 12.475 | S | Moor | 0.384292 | 1 |
 | train_oof | 808 | 0 | 0 | 1 | upshift_0_to_1 | kill | female | 3 | 18.0 | 0 | 0 | 7.775 | S | Pettersson | 0.382889 | 0 |
 | train_oof | 814 | 0 | 1 | 0 | downshift_1_to_0 | rescue | female | 3 | 6.0 | 4 | 2 | 31.275 | S | Andersson | 0.301111 | 8 |
 | train_oof | 831 | 1 | 0 | 1 | upshift_0_to_1 | rescue | female | 3 | 15.0 | 1 | 0 | 14.4542 | C | Yasbeck | 0.383427 | 1 |

@@ -48,19 +48,19 @@ Step 18 tested `SurnameSurvival` as a normal GB feature. Step 18B moved to a con
 
 ## Baseline metrics
 
-| variant | model | features | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | test_pred_1_count | test_pred_1_rate |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| raw_tabular | GradientBoostingClassifier | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 141 | 0.337321 |
+| variant | model | features | cv_mean | cv_std | oof_accuracy | test_pred_1_count | test_pred_1_rate |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| raw_tabular | GradientBoostingClassifier | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.825701 | 0.021513 | 0.82716 | 141 | 0.337321 |
 
 ## Candidate metrics table
 
-| candidate | rule | baseline_oof_accuracy | candidate_oof_accuracy | delta_vs_raw_tabular | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_changed_rows | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | test_changed_rows | test_0_to_1 | test_1_to_0 | baseline_test_pred_1_count | baseline_test_pred_1_rate | candidate_test_pred_1_count | candidate_test_pred_1_rate | inactive_changed_rows_oof | inactive_changed_rows_test | diagnostic_status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| surname_overlay_broad_reference_min3 | active count >= 3; rate >= 0.5 set to 1; rate <= fold/full-train global survival rate set to 0; otherwise keep baseline | 0.82716 | 0.820426 | -0.006734 | 0.820444 | 0.025972 | 0.804469 | 0.859551 | 0.792135 | 0.803371 | 0.842697 | 10 | 5 | 5 | 2 | 8 | -6 | 10 | 5 | 5 | 141 | 0.337321 | 141 | 0.337321 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
-| surname_overlay_upshift_only_min3 | active count >= 3; baseline_pred == 0; rate >= 0.5 set to 1; otherwise keep baseline | 0.82716 | 0.821549 | -0.005612 | 0.821562 | 0.023298 | 0.810056 | 0.859551 | 0.803371 | 0.797753 | 0.837079 | 5 | 5 | 0 | 0 | 5 | -5 | 5 | 5 | 0 | 141 | 0.337321 | 146 | 0.349282 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
-| surname_overlay_downshift_only_min3 | active count >= 3; baseline_pred == 1; rate <= fold/full-train global survival rate set to 0; otherwise keep baseline | 0.82716 | 0.826038 | -0.001122 | 0.826044 | 0.022425 | 0.821229 | 0.859551 | 0.797753 | 0.808989 | 0.842697 | 5 | 0 | 5 | 2 | 3 | -1 | 5 | 0 | 5 | 141 | 0.337321 | 136 | 0.325359 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
-| surname_overlay_downshift_strict_min3 | active count >= 3; baseline_pred == 1; rate <= 0.30 set to 0; otherwise keep baseline | 0.82716 | 0.828283 | 0.001122 | 0.828284 | 0.018983 | 0.826816 | 0.859551 | 0.808989 | 0.808989 | 0.837079 | 1 | 0 | 1 | 1 | 0 | 1 | 2 | 0 | 2 | 141 | 0.337321 | 139 | 0.332536 | 0 | 0 | OOF_POSITIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
-| surname_overlay_upshift_strict_min3 | active count >= 3; baseline_pred == 0; rate >= 0.60 set to 1; otherwise keep baseline | 0.82716 | 0.822671 | -0.004489 | 0.822679 | 0.022849 | 0.815642 | 0.859551 | 0.803371 | 0.797753 | 0.837079 | 4 | 4 | 0 | 0 | 4 | -4 | 0 | 0 | 0 | 141 | 0.337321 | 141 | 0.337321 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
+| candidate | rule | baseline_oof_accuracy | candidate_oof_accuracy | delta_vs_raw_tabular | cv_mean | cv_std | oof_changed_rows | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | test_changed_rows | test_0_to_1 | test_1_to_0 | baseline_test_pred_1_count | baseline_test_pred_1_rate | candidate_test_pred_1_count | candidate_test_pred_1_rate | inactive_changed_rows_oof | inactive_changed_rows_test | diagnostic_status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| surname_overlay_broad_reference_min3 | active count >= 3; rate >= 0.5 set to 1; rate <= fold/full-train global survival rate set to 0; otherwise keep baseline | 0.82716 | 0.820426 | -0.006734 | 0.820444 | 0.025972 | 10 | 5 | 5 | 2 | 8 | -6 | 10 | 5 | 5 | 141 | 0.337321 | 141 | 0.337321 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
+| surname_overlay_upshift_only_min3 | active count >= 3; baseline_pred == 0; rate >= 0.5 set to 1; otherwise keep baseline | 0.82716 | 0.821549 | -0.005612 | 0.821562 | 0.023298 | 5 | 5 | 0 | 0 | 5 | -5 | 5 | 5 | 0 | 141 | 0.337321 | 146 | 0.349282 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
+| surname_overlay_downshift_only_min3 | active count >= 3; baseline_pred == 1; rate <= fold/full-train global survival rate set to 0; otherwise keep baseline | 0.82716 | 0.826038 | -0.001122 | 0.826044 | 0.022425 | 5 | 0 | 5 | 2 | 3 | -1 | 5 | 0 | 5 | 141 | 0.337321 | 136 | 0.325359 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
+| surname_overlay_downshift_strict_min3 | active count >= 3; baseline_pred == 1; rate <= 0.30 set to 0; otherwise keep baseline | 0.82716 | 0.828283 | 0.001122 | 0.828284 | 0.018983 | 1 | 0 | 1 | 1 | 0 | 1 | 2 | 0 | 2 | 141 | 0.337321 | 139 | 0.332536 | 0 | 0 | OOF_POSITIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
+| surname_overlay_upshift_strict_min3 | active count >= 3; baseline_pred == 0; rate >= 0.60 set to 1; otherwise keep baseline | 0.82716 | 0.822671 | -0.004489 | 0.822679 | 0.022849 | 4 | 4 | 0 | 0 | 4 | -4 | 0 | 0 | 0 | 141 | 0.337321 | 141 | 0.337321 | 0 | 0 | OOF_NEGATIVE / NO_SUBMISSION / PUBLIC_UNKNOWN |
 
 ## Directional comparison table
 
@@ -76,7 +76,7 @@ Step 18 tested `SurnameSurvival` as a normal GB feature. Step 18B moved to a con
 
 | model_class | package | package_version | preprocessing_mode | explicit_technical_params | actual_resolved_params | parameter_adjustments | error |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | scikit-learn | 1.9.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "deprecated", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
+| GradientBoostingClassifier | scikit-learn | 1.8.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "friedman_mse", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
 
 ## Inactive changed rows invariant
 

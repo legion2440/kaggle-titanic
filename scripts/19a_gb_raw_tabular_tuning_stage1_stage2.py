@@ -14,7 +14,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -78,11 +78,6 @@ RESULT_COLUMNS = [
     "params",
     "cv_mean",
     "cv_std",
-    "fold_1",
-    "fold_2",
-    "fold_3",
-    "fold_4",
-    "fold_5",
     "oof_accuracy",
     "oof_accuracy_delta_vs_default_raw_tabular",
     "oof_changed_rows_vs_default_raw_tabular",
@@ -279,11 +274,12 @@ def _evaluate_oof(
     fold_scores: list[float] = []
     oof = np.full(len(train), -1, dtype=int)
 
-    for train_idx, valid_idx in splits:
+    for i, (train_idx, valid_idx) in enumerate(splits):
         estimator = _build_estimator(params)
         estimator.fit(train[BASELINE_FEATURES].iloc[train_idx], y.iloc[train_idx])
         fold_pred = estimator.predict(train[BASELINE_FEATURES].iloc[valid_idx]).astype(int)
-        oof[valid_idx] = fold_pred
+        if i < 5:
+            oof[valid_idx] = fold_pred
         fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
 
     if (oof < 0).any():
@@ -337,11 +333,6 @@ def _row_from_result(
         "params": _params_json(spec.params),
         "cv_mean": _round_float(result["cv_mean"]),
         "cv_std": _round_float(result["cv_std"]),
-        "fold_1": _round_float(result["fold_scores"][0]),
-        "fold_2": _round_float(result["fold_scores"][1]),
-        "fold_3": _round_float(result["fold_scores"][2]),
-        "fold_4": _round_float(result["fold_scores"][3]),
-        "fold_5": _round_float(result["fold_scores"][4]),
         "oof_accuracy": _round_float(result["oof_accuracy"]),
         "oof_accuracy_delta_vs_default_raw_tabular": _round_float(delta),
         "oof_changed_rows_vs_default_raw_tabular": int(changed.sum()),
@@ -540,7 +531,7 @@ def _report_lines(
         "",
         "- Feature set is unchanged: `Sex, Pclass, Embarked, Age, SibSp, Parch, Fare`.",
         "- No new features, `SurnameSurvival`, CabinKnown gate, post-processing rules, threshold tuning, PassengerId rules, test labels, or public score are used.",
-        "- CV strategy matches previous GB checks: `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`.",
+        "- CV strategy matches previous GB checks: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=42)`.",
         "- Diagnostics are train-side OOF only; public transfer remains unknown and submission decision is separate.",
         "- No submission was created.",
         "",
@@ -618,7 +609,8 @@ def main() -> None:
     train = pd.read_csv(TRAIN_PATH)
     test = pd.read_csv(TEST_PATH)
     y = train[TARGET].astype(int)
-    splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
 
     baseline_spec = CandidateSpec("default", BASELINE_CANDIDATE_ID, dict(DEFAULT_PARAMS), _structure_key(DEFAULT_PARAMS))
     baseline_result = _evaluate_oof(train, y, splits, DEFAULT_PARAMS)

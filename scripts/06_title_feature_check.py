@@ -13,7 +13,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 import numpy as np
 import pandas as pd
 from sklearn.base import clone
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -196,8 +196,8 @@ def _evaluate(
     y = train[TARGET] if not missing_target else pd.Series(dtype=int)
     splits = []
     if not missing_target:
-        splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-        splits = list(splitter.split(np.zeros(len(train)), y))
+        splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+        oof_splits = splits[:5]
 
     rows = []
     oof_predictions: dict[tuple[str, str], np.ndarray] = {}
@@ -266,11 +266,12 @@ def _evaluate(
                 oof = np.full(len(train), -1, dtype=int)
                 x = train[list(feature_names)]
 
-                for train_idx, valid_idx in splits:
+                for i, (train_idx, valid_idx) in enumerate(splits):
                     fold_estimator = clone(estimator)
                     fold_estimator.fit(x.iloc[train_idx], y.iloc[train_idx])
                     fold_pred = fold_estimator.predict(x.iloc[valid_idx]).astype(int)
-                    oof[valid_idx] = fold_pred
+                    if i < 5:
+                        oof[valid_idx] = fold_pred
                     fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
 
                 if (oof < 0).any():
@@ -567,7 +568,7 @@ def _build_report(
         "",
         "## CV Protocol",
         "",
-        f"- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state={RANDOM_STATE})`",
+        f"- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state={RANDOM_STATE})`",
         "- metric: `accuracy`",
         "- identical precomputed CV split indices are reused for every model and feature set",
         "- preprocessing is fitted inside each train fold through an sklearn `Pipeline`",

@@ -9,8 +9,7 @@
 - the same model panel technical parameters and package version logic as `04_baseline` are used
 - no `gender_submission.csv` as truth
 - no test labels or row-level correctness checks
-- no public leaderboard score is used for training, inference, tuning, thresholding, or candidate selection
-- fixed public scores are recorded only after frozen file generation as checkpoint metadata
+- no public leaderboard score inside the script
 - no feature engineering, `Title`, derived features, deferred features, or target-derived features
 - no hyperparameter tuning, threshold tuning, PassengerId overrides, or manual correction rules
 - candidates are fixed by the checkpoint batch specification, not by public score

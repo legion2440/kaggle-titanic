@@ -19,7 +19,12 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.config import ID_COLUMN, REPORTS_DIR, TARGET, TEST_PATH, TRAIN_PATH
-from scripts.preprocessing import make_preprocessor
+from scripts.preprocessing import CATEGORICAL_FEATURES, make_preprocessor
+
+# AgeBucket is constructed locally for this check only — register it as categorical
+# so make_preprocessor can route it to OHE (same pattern as scripts 17/18).
+if "AgeBucket" not in CATEGORICAL_FEATURES:
+    CATEGORICAL_FEATURES.append("AgeBucket")
 
 
 REPORT_PATH = REPORTS_DIR / "12_agebucket_frozen_checkpoint.md"

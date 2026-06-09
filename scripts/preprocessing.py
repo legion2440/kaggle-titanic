@@ -13,11 +13,8 @@ NUMERIC_FEATURES = [
     "SibSp",
     "Parch",
     "Fare",
-    "AgeMissing",
-    "IsChild12",
     "FamilySize",
     "FareLog",
-    "CabinKnown",
 ]
 
 CATEGORICAL_FEATURES = [
@@ -25,9 +22,18 @@ CATEGORICAL_FEATURES = [
     "Pclass",
     "Embarked",
     "Title",
-    "AgeBucket",
     "AgeBin",
     "FamilySizeBucket",
+]
+
+# Binary 0/1 flags — no imputation needed (never NaN), no scaling (already bounded).
+# Passed through as-is in both scaled_linear and unscaled_tree modes.
+# Scripts that create local binary-like features (e.g. 11/12 AgeBucket) must register
+# them dynamically before calling make_preprocessor, following the pattern in scripts 17/18.
+BINARY_FEATURES = [
+    "AgeMissing",
+    "IsChild12",
+    "CabinKnown",
 ]
 
 PREPROCESSING_MODES = ["scaled_linear", "unscaled_tree"]
@@ -38,7 +44,7 @@ FEATURE_SETS = {
     "raw_plus_title": [*RAW_TABULAR, "Title"],
     "raw_plus_agemissing": [*RAW_TABULAR, "AgeMissing"],
     "raw_plus_agebin_child12": [*RAW_TABULAR, "AgeBin", "IsChild12"],
-    "raw_plus_family": [*RAW_TABULAR, "FamilySize", "FamilySizeBucket"],
+    "raw_plus_family": [*RAW_TABULAR, "FamilySizeBucket"],
     "raw_plus_farelog": [*RAW_TABULAR, "FareLog"],
     "raw_plus_cabinknown": [*RAW_TABULAR, "CabinKnown"],
 }
@@ -70,21 +76,22 @@ def get_feature_sets() -> dict[str, list[str]]:
     return {name: list(features) for name, features in FEATURE_SETS.items()}
 
 
-def split_feature_types(feature_names: list[str]) -> tuple[list[str], list[str]]:
+def split_feature_types(
+    feature_names: list[str],
+) -> tuple[list[str], list[str], list[str]]:
     numeric_set = set(NUMERIC_FEATURES)
     categorical_set = set(CATEGORICAL_FEATURES)
+    binary_set = set(BINARY_FEATURES)
+    known = numeric_set | categorical_set | binary_set
 
-    unknown = [
-        feature
-        for feature in feature_names
-        if feature not in numeric_set and feature not in categorical_set
-    ]
+    unknown = [f for f in feature_names if f not in known]
     if unknown:
         raise ValueError(f"Unknown feature type for: {unknown}")
 
-    numeric = [feature for feature in feature_names if feature in numeric_set]
-    categorical = [feature for feature in feature_names if feature in categorical_set]
-    return numeric, categorical
+    numeric = [f for f in feature_names if f in numeric_set]
+    categorical = [f for f in feature_names if f in categorical_set]
+    binary = [f for f in feature_names if f in binary_set]
+    return numeric, categorical, binary
 
 
 def make_one_hot_encoder() -> OneHotEncoder:
@@ -98,7 +105,7 @@ def make_preprocessor(mode: str, feature_names: list[str]) -> ColumnTransformer:
     if mode not in PREPROCESSING_MODES:
         raise ValueError(f"Unknown preprocessing mode: {mode}")
 
-    numeric_features, categorical_features = split_feature_types(feature_names)
+    numeric_features, categorical_features, binary_features = split_feature_types(feature_names)
 
     numeric_steps = [("imputer", SimpleImputer(strategy="median"))]
     if mode == "scaled_linear":
@@ -114,5 +121,8 @@ def make_preprocessor(mode: str, feature_names: list[str]) -> ColumnTransformer:
         transformers.append(("numeric", Pipeline(numeric_steps), numeric_features))
     if categorical_features:
         transformers.append(("categorical", Pipeline(categorical_steps), categorical_features))
+    if binary_features:
+        # Binary 0/1 flags are always finite and never NaN — pass through unchanged.
+        transformers.append(("binary", "passthrough", binary_features))
 
     return ColumnTransformer(transformers=transformers, remainder="drop")

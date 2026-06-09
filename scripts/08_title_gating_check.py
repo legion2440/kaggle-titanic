@@ -12,7 +12,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -151,12 +151,12 @@ def _compute_oof_probabilities(train: pd.DataFrame) -> tuple[np.ndarray, np.ndar
         raise ValueError("missing title feature columns: " + ", ".join(missing_title))
 
     y = train[TARGET].astype(int)
-    splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-    splits = list(splitter.split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
     p_base = np.full(len(train), np.nan, dtype=float)
     p_title = np.full(len(train), np.nan, dtype=float)
 
-    for train_idx, valid_idx in splits:
+    for i, (train_idx, valid_idx) in enumerate(splits):
         base_model, _, base_error = _build_model()
         title_model, _, title_error = _build_model()
         if base_model is None:
@@ -184,8 +184,9 @@ def _compute_oof_probabilities(train: pd.DataFrame) -> tuple[np.ndarray, np.ndar
 
         base_pipeline.fit(x_base_train, y.iloc[train_idx])
         title_pipeline.fit(x_title_train, y.iloc[train_idx])
-        p_base[valid_idx] = _class1_proba(base_pipeline, x_base_valid)
-        p_title[valid_idx] = _class1_proba(title_pipeline, x_title_valid)
+        if i < 5:
+            p_base[valid_idx] = _class1_proba(base_pipeline, x_base_valid)
+            p_title[valid_idx] = _class1_proba(title_pipeline, x_title_valid)
 
     if np.isnan(p_base).any() or np.isnan(p_title).any():
         raise RuntimeError("OOF probability assignment incomplete")
@@ -349,7 +350,7 @@ def _build_report(
         "",
         "## CV / OOF Protocol",
         "",
-        f"- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state={RANDOM_STATE})`",
+        f"- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state={RANDOM_STATE})`",
         "- identical folds are used for base and title models",
         "- preprocessing is fitted inside each train fold through an sklearn `Pipeline`",
         "- base model: `raw_tabular / GradientBoostingClassifier`",

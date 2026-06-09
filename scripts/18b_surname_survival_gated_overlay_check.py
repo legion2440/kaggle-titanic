@@ -12,7 +12,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -52,11 +52,6 @@ METRIC_COLUMNS = [
     "features",
     "cv_mean",
     "cv_std",
-    "fold_1",
-    "fold_2",
-    "fold_3",
-    "fold_4",
-    "fold_5",
     "oof_accuracy",
     "oof_accuracy_delta_vs_raw_tabular",
     "oof_changed_rows",
@@ -309,16 +304,16 @@ def _evaluate_oof(
         fold_valid_overlay = _add_surname_overlay_columns(fold_valid, encoder)
         fold_candidate = _overlay_predictions(fold_baseline, fold_valid_overlay)
 
-        baseline_oof[valid_idx] = fold_baseline
-        candidate_oof[valid_idx] = fold_candidate
+        if fold_id <= 5:
+            baseline_oof[valid_idx] = fold_baseline
+            candidate_oof[valid_idx] = fold_candidate
+            fold_valid_overlay = fold_valid_overlay.copy()
+            fold_valid_overlay["Fold"] = fold_id
+            fold_valid_overlay["baseline_pred"] = fold_baseline
+            fold_valid_overlay["candidate_pred"] = fold_candidate
+            overlay_parts.append(fold_valid_overlay)
         baseline_fold_scores.append(float((fold_baseline == y.iloc[valid_idx].to_numpy()).mean()))
         candidate_fold_scores.append(float((fold_candidate == y.iloc[valid_idx].to_numpy()).mean()))
-
-        fold_valid_overlay = fold_valid_overlay.copy()
-        fold_valid_overlay["Fold"] = fold_id
-        fold_valid_overlay["baseline_pred"] = fold_baseline
-        fold_valid_overlay["candidate_pred"] = fold_candidate
-        overlay_parts.append(fold_valid_overlay)
 
     if (baseline_oof < 0).any() or (candidate_oof < 0).any():
         raise RuntimeError("OOF prediction assignment incomplete")
@@ -441,11 +436,6 @@ def _metric_rows(
                 "features": spec["features"],
                 "cv_mean": _round_float(float(np.mean(spec["fold_scores"]))),
                 "cv_std": _round_float(float(np.std(spec["fold_scores"]))),
-                "fold_1": _round_float(spec["fold_scores"][0]),
-                "fold_2": _round_float(spec["fold_scores"][1]),
-                "fold_3": _round_float(spec["fold_scores"][2]),
-                "fold_4": _round_float(spec["fold_scores"][3]),
-                "fold_5": _round_float(spec["fold_scores"][4]),
                 "oof_accuracy": _round_float(float((oof == y).mean())),
                 "oof_accuracy_delta_vs_raw_tabular": _round_float(float((oof == y).mean()) - baseline_accuracy),
                 "oof_changed_rows": int(changed.sum()),
@@ -712,7 +702,8 @@ def main() -> None:
     train = _add_surname(pd.read_csv(TRAIN_PATH))
     test = _add_surname(pd.read_csv(TEST_PATH))
     y = train[TARGET].astype(int)
-    splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
 
     oof_result = _evaluate_oof(train, splits, y)
     test_result = _evaluate_test(train, test)

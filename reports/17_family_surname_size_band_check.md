@@ -26,14 +26,14 @@ This is not additive on top of `SibSp/Parch`, not overlap-aware, and not target 
 
 | model_class | package | package_version | preprocessing_mode | explicit_technical_params | actual_resolved_params | parameter_adjustments | error |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | scikit-learn | 1.9.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "deprecated", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
+| GradientBoostingClassifier | scikit-learn | 1.8.0 | unscaled_tree | {"random_state": 42} | {"ccp_alpha": 0.0, "criterion": "friedman_mse", "init": null, "learning_rate": 0.1, "loss": "log_loss", "max_depth": 3, "max_features": null, "max_leaf_nodes": null, "min_impurity_decrease": 0.0, "min_samples_leaf": 1, "min_samples_split": 2, "min_weight_fraction_leaf": 0.0, "n_estimators": 100, "n_iter_no_change": null, "random_state": 42, "subsample": 1.0, "tol": 0.0001, "validation_fraction": 0.1, "verbose": 0, "warm_start": false} |  |  |
 
 ## OOF result
 
-| model_name | variant | candidate_id | feature_set | features | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_changed_pct | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | pred_1_count | pred_1_rate | pred_1_rate_delta_vs_raw_tabular | test_changed_rows_vs_raw_tabular_full_fit | test_changed_pct_vs_raw_tabular_full_fit | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | test_pred_1_rate_delta_vs_raw_tabular | train_survival_rate | prediction_rate_sanity_flag | final_status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | raw_tabular | raw_tabular__GradientBoostingClassifier | raw_tabular | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 0.0 | 0 | 0.0 | 0 | 0 | 0 | 0 | 0 | 294 | 0.329966 | 0.0 | 0 | 0.0 | 0 | 0 | 141 | 0.337321 | 0.0 | 0.383838 | OK |  |
-| GradientBoostingClassifier | raw_family_surname_size_band | raw_family_surname_size_band__GradientBoostingClassifier | raw_family_surname_size_band | Sex, Pclass, Embarked, Age, Fare, FamilySurnameSizeBand | 0.820419 | 0.020468 | 0.826816 | 0.837079 | 0.786517 | 0.808989 | 0.842697 | 0.820426 | -0.006734 | 28 | 3.142536 | 16 | 12 | 11 | 17 | -6 | 298 | 0.334456 | 0.004489 | 20 | 4.784689 | 10 | 10 | 141 | 0.337321 | 0.0 | 0.383838 | OK | REJECTED_TRAIN_SIDE |
+| model_name | variant | candidate_id | feature_set | features | cv_mean | cv_std | oof_accuracy | oof_accuracy_delta_vs_raw_tabular | oof_changed_rows | oof_changed_pct | oof_0_to_1 | oof_1_to_0 | rescue | kill | net | pred_1_count | pred_1_rate | pred_1_rate_delta_vs_raw_tabular | test_changed_rows_vs_raw_tabular_full_fit | test_changed_pct_vs_raw_tabular_full_fit | test_0_to_1 | test_1_to_0 | test_pred_1_count | test_pred_1_rate | test_pred_1_rate_delta_vs_raw_tabular | train_survival_rate | prediction_rate_sanity_flag | final_status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GradientBoostingClassifier | raw_tabular | raw_tabular__GradientBoostingClassifier | raw_tabular | Sex, Pclass, Embarked, Age, SibSp, Parch, Fare | 0.825701 | 0.021513 | 0.82716 | 0.0 | 0 | 0.0 | 0 | 0 | 0 | 0 | 0 | 294 | 0.329966 | 0.0 | 0 | 0.0 | 0 | 0 | 141 | 0.337321 | 0.0 | 0.383838 | OK |  |
+| GradientBoostingClassifier | raw_family_surname_size_band | raw_family_surname_size_band__GradientBoostingClassifier | raw_family_surname_size_band | Sex, Pclass, Embarked, Age, Fare, FamilySurnameSizeBand | 0.823119 | 0.025799 | 0.820426 | -0.006734 | 28 | 3.142536 | 16 | 12 | 11 | 17 | -6 | 298 | 0.334456 | 0.004489 | 20 | 4.784689 | 10 | 10 | 141 | 0.337321 | 0.0 | 0.383838 | OK | REJECTED_TRAIN_SIDE |
 
 ## OOF changed-row audit
 
@@ -152,35 +152,6 @@ Test row-level audit:
 Final status: **REJECTED_TRAIN_SIDE**
 
 Reason: train-side evidence is negative or weak under the predeclared Step 15/16-style decision rule.
-
-## Structural lane closure
-
-Step 17 Family/Surname structural lane = **CLOSED**.
-
-Final statuses:
-
-- `FamilySurnameSizeBand` replacement = **REJECTED_TRAIN_SIDE**.
-- mismatch-aware combined `FamilySurnameBand` = **REMOVED / INVALID_STEP**.
-- `FamilySmallerThanSurnameFlag` / mismatch-only = **NOT_OPENED / NO_EDA_BASIS**.
-- Family/Surname structural lane = **CLOSED**.
-
-Closure basis:
-
-- Step 17A showed that `FamilySize` and `SurnameCount` overlap heavily: `FamilySize == SurnameCount` is train `665/891 = 0.7464`, test `303/418 = 0.7249`; `FamilySize != SurnameCount` is train `226/891 = 0.2536`, test `115/418 = 0.2751`.
-- The divergence count/rate is coverage, not signal by itself.
-- Aggregate match/mismatch survival contrast is weak: `FamilySize == SurnameCount` survival is `0.3729`, while `FamilySize != SurnameCount` survival is `0.4159`.
-- Therefore general mismatch is not a strong standalone theory.
-- Corrected Step 17B tested `FamilySurnameSizeBand` as a replacement for raw `SibSp` and `Parch`; it did not beat `raw_tabular`.
-- Corrected Step 17B metrics: raw_tabular OOF accuracy `0.827160`; candidate OOF accuracy `0.820426`; OOF delta `-0.006734`; candidate CV mean/std `0.820419 / 0.020468`; OOF changed rows `28`; OOF `0 -> 1` `16`; OOF `1 -> 0` `12`; rescue/kill/net `11 / 17 / -6`; test changed rows `20`; test `0 -> 1` `10`; test `1 -> 0` `10`; test pred_1_rate delta vs raw_tabular `0.0`; final status `REJECTED_TRAIN_SIDE`; no submission was created.
-- The earlier mismatch-aware combined `FamilySurnameBand` check mixed two separate ideas into one feature. It should be treated only as removed/invalid documentation context, not as the intended 17B and not as an active candidate.
-- `FamilySmallerThanSurnameFlag` / mismatch-only is not opened because the available EDA does not provide a strong enough survival contrast for another structural diagnostic after the corrected 17B rejection.
-
-Reading boundary:
-
-- Do not run mismatch-only or `FamilySmallerThanSurnameFlag`.
-- Do not list Step 17C as a pending check.
-- Do not create public-score tuning, PassengerId rules, Ticket/Fare expansion, target encoding, new submissions, or new model checks from this structural lane.
-- `SurnameSurvival` remains a separate target-derived fold-safe lane and is not part of Family/Surname structural lane closure.
 
 ## Validation guard
 

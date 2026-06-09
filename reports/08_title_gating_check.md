@@ -26,7 +26,7 @@
 
 ## CV / OOF Protocol
 
-- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`
+- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=42)`
 - identical folds are used for base and title models
 - preprocessing is fitted inside each train fold through an sklearn `Pipeline`
 - base model: `raw_tabular / GradientBoostingClassifier`

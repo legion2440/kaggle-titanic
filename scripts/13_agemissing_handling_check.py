@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -51,11 +51,6 @@ CSV_COLUMNS = [
     "preprocessing_strategy",
     "cv_mean",
     "cv_std",
-    "fold_1",
-    "fold_2",
-    "fold_3",
-    "fold_4",
-    "fold_5",
     "oof_accuracy",
     "pred_1_rate",
     "base_variant",
@@ -356,14 +351,15 @@ def _evaluate_variant(
     effective_strategy = histgb_strategy
 
     try:
-        for train_idx, valid_idx in splits:
+        for i, (train_idx, valid_idx) in enumerate(splits):
             estimator, _, build_error = _build_estimator(variant, effective_strategy)
             if estimator is None:
                 raise RuntimeError(build_error)
             x = train[variant.features]
             estimator.fit(x.iloc[train_idx], y.iloc[train_idx])
             fold_pred = estimator.predict(x.iloc[valid_idx]).astype(int)
-            oof[valid_idx] = fold_pred
+            if i < 5:
+                oof[valid_idx] = fold_pred
             fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
     except Exception as exc:
         if variant.model_name == "HistGradientBoostingClassifier" and effective_strategy == "from_dtype":
@@ -371,14 +367,15 @@ def _evaluate_variant(
             fold_scores = []
             oof = np.full(len(train), -1, dtype=int)
             try:
-                for train_idx, valid_idx in splits:
+                for i, (train_idx, valid_idx) in enumerate(splits):
                     estimator, _, build_error = _build_estimator(variant, effective_strategy)
                     if estimator is None:
                         raise RuntimeError(build_error)
                     x = train[variant.features]
                     estimator.fit(x.iloc[train_idx], y.iloc[train_idx])
                     fold_pred = estimator.predict(x.iloc[valid_idx]).astype(int)
-                    oof[valid_idx] = fold_pred
+                    if i < 5:
+                        oof[valid_idx] = fold_pred
                     fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
             except Exception as fallback_exc:
                 return (
@@ -432,8 +429,8 @@ def _evaluate_variants(
     train: pd.DataFrame,
 ) -> tuple[dict[str, dict[str, object]], dict[str, str], bool]:
     y = train[TARGET].astype(int)
-    splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-    splits = list(splitter.split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
     results: dict[str, dict[str, object]] = {}
     histgb_strategies: dict[str, str] = {}
     all_passed = True
@@ -523,11 +520,6 @@ def _comparison_row(
         "preprocessing_strategy": variant.preprocessing_strategy,
         "cv_mean": _round_float(candidate["cv_mean"]),
         "cv_std": _round_float(candidate["cv_std"]),
-        "fold_1": _round_float(fold_scores[0]),
-        "fold_2": _round_float(fold_scores[1]),
-        "fold_3": _round_float(fold_scores[2]),
-        "fold_4": _round_float(fold_scores[3]),
-        "fold_5": _round_float(fold_scores[4]),
         "oof_accuracy": _round_float(candidate["oof_accuracy"]),
         "pred_1_rate": _round_float(candidate["pred_1_rate"]),
         "base_variant": base_variant_name,
@@ -573,11 +565,6 @@ def _failed_rows(results: dict[str, dict[str, object]]) -> list[dict[str, object
                 "preprocessing_strategy": variant.preprocessing_strategy,
                 "cv_mean": "",
                 "cv_std": "",
-                "fold_1": "",
-                "fold_2": "",
-                "fold_3": "",
-                "fold_4": "",
-                "fold_5": "",
                 "oof_accuracy": "",
                 "pred_1_rate": "",
                 "base_variant": variant.base_variant,
@@ -771,7 +758,7 @@ def _build_report(
         "",
         f"- overall status: `{status}`",
         f"- rows: `{len(train)}`",
-        f"- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state={RANDOM_STATE})`",
+        f"- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state={RANDOM_STATE})`",
         "- metric: `accuracy`",
         "",
         _markdown_table(comparison_rows, CSV_COLUMNS),

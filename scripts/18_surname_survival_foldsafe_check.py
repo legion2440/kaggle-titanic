@@ -12,7 +12,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -83,11 +83,6 @@ METRIC_COLUMNS = [
     "features",
     "cv_mean",
     "cv_std",
-    "fold_1",
-    "fold_2",
-    "fold_3",
-    "fold_4",
-    "fold_5",
     "oof_accuracy",
     "oof_accuracy_delta_vs_raw_tabular",
     "oof_changed_rows",
@@ -283,13 +278,14 @@ def _evaluate_raw_tabular(
 
     fold_scores: list[float] = []
     oof = np.full(len(train), -1, dtype=int)
-    for train_idx, valid_idx in splits:
+    for i, (train_idx, valid_idx) in enumerate(splits):
         estimator, _, build_error = _build_estimator(BASELINE_FEATURES)
         if estimator is None:
             raise RuntimeError(build_error)
         estimator.fit(train[BASELINE_FEATURES].iloc[train_idx], y.iloc[train_idx])
         fold_pred = estimator.predict(train[BASELINE_FEATURES].iloc[valid_idx]).astype(int)
-        oof[valid_idx] = fold_pred
+        if i < 5:
+            oof[valid_idx] = fold_pred
         fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
 
     if (oof < 0).any():
@@ -320,7 +316,7 @@ def _evaluate_surname_survival(
     oof_surname_survival = np.full(len(train), np.nan, dtype=float)
     oof_surname_count = np.zeros(len(train), dtype=int)
 
-    for train_idx, valid_idx in splits:
+    for i, (train_idx, valid_idx) in enumerate(splits):
         fold_train = train.iloc[train_idx].copy()
         fold_valid = train.iloc[valid_idx].copy()
         encoder = _fit_surname_encoder(fold_train)
@@ -332,9 +328,10 @@ def _evaluate_surname_survival(
             raise RuntimeError(build_error)
         estimator.fit(fold_train[CANDIDATE_FEATURES], y.iloc[train_idx])
         fold_pred = estimator.predict(fold_valid[CANDIDATE_FEATURES]).astype(int)
-        oof[valid_idx] = fold_pred
-        oof_surname_survival[valid_idx] = fold_valid[SURNAME_SURVIVAL_FEATURE].to_numpy()
-        oof_surname_count[valid_idx] = valid_counts.to_numpy()
+        if i < 5:
+            oof[valid_idx] = fold_pred
+            oof_surname_survival[valid_idx] = fold_valid[SURNAME_SURVIVAL_FEATURE].to_numpy()
+            oof_surname_count[valid_idx] = valid_counts.to_numpy()
         fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
 
     if (oof < 0).any():
@@ -519,11 +516,6 @@ def _metric_rows(
             "features": ", ".join(variant.features),
             "cv_mean": _round_float(result["cv_mean"]),
             "cv_std": _round_float(result["cv_std"]),
-            "fold_1": _round_float(result["fold_scores"][0]),
-            "fold_2": _round_float(result["fold_scores"][1]),
-            "fold_3": _round_float(result["fold_scores"][2]),
-            "fold_4": _round_float(result["fold_scores"][3]),
-            "fold_5": _round_float(result["fold_scores"][4]),
             "oof_accuracy": _round_float(result["oof_accuracy"]),
             "oof_accuracy_delta_vs_raw_tabular": _round_float(float(result["oof_accuracy"]) - float(base["oof_accuracy"])),
             "oof_changed_rows": int(changed.sum()),
@@ -722,7 +714,8 @@ def main() -> None:
     train = _add_surname(pd.read_csv(TRAIN_PATH))
     test = _add_surname(pd.read_csv(TEST_PATH))
     y = train[TARGET].astype(int)
-    splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
 
     results = {
         BASELINE_VARIANT: _evaluate_raw_tabular(train, splits, y),

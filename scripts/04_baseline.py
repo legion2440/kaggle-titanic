@@ -16,7 +16,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold, cross_val_score
 from sklearn.pipeline import Pipeline
 
 
@@ -360,8 +360,8 @@ def _evaluate(
     y = train[TARGET] if not missing_target else pd.Series(dtype=int)
     splits = []
     if not missing_target:
-        splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-        splits = list(splitter.split(np.zeros(len(train)), y))
+        splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+        oof_splits = splits[:5]
 
     rows = []
     all_passed = True
@@ -627,7 +627,7 @@ def _build_report(
         "",
         "## CV Protocol",
         "",
-        f"- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state={RANDOM_STATE})`",
+        f"- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state={RANDOM_STATE})`",
         "- metric: `accuracy`",
         "- identical precomputed CV split indices are reused for every model and feature set",
         "- preprocessing is fitted inside each train fold through an sklearn `Pipeline`",

@@ -50,60 +50,60 @@
 
 - overall status: `PASS`
 - rows: `891`
-- splitter: `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`
+- splitter: `RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=42)`
 - metric: `accuracy`
 
-| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | gb_raw_tabular_median | raw_tabular | existing unscaled_tree preprocessing: numeric median imputation; categorical most_frequent + one-hot | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 0.329966 | gb_raw_tabular_median | 0 | 0.0 | 0 | 0 | 0 | BASELINE_REFERENCE |
-| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.828284 | 0.018306 | 0.826816 | 0.853933 | 0.814607 | 0.803371 | 0.842697 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | KEEP_CANDIDATE |
-| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.83389 | 0.02349 | 0.837989 | 0.837079 | 0.825843 | 0.797753 | 0.870787 | 0.833895 | 0.329966 | gb_raw_tabular_median | 34 | 3.815937 | 20 | 14 | 6 | KEEP_CANDIDATE |
-| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_BASELINE_REFERENCE |
-| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
-| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | gb_raw_tabular_median | 70 | 7.856341 | 40 | 30 | 10 | CROSS_REFERENCE_ONLY |
+| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GradientBoostingClassifier | gb_raw_tabular_median | raw_tabular | existing unscaled_tree preprocessing: numeric median imputation; categorical most_frequent + one-hot | 0.825701 | 0.021513 | 0.82716 | 0.329966 | gb_raw_tabular_median | 0 | 0.0 | 0 | 0 | 0 | BASELINE_REFERENCE |
+| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.822893 | 0.021439 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | DEFERRED |
+| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.818854 | 0.022204 | 0.832772 | 0.328844 | gb_raw_tabular_median | 33 | 3.703704 | 19 | 14 | 5 | DEFERRED |
+| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_BASELINE_REFERENCE |
+| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
+| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.818743 | 0.024026 | 0.838384 | 0.356902 | gb_raw_tabular_median | 70 | 7.856341 | 40 | 30 | 10 | CROSS_REFERENCE_ONLY |
 
 ## Best rows
 
-| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_BASELINE_REFERENCE |
-| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
-| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.83389 | 0.02349 | 0.837989 | 0.837079 | 0.825843 | 0.797753 | 0.870787 | 0.833895 | 0.329966 | gb_raw_tabular_median | 34 | 3.815937 | 20 | 14 | 6 | KEEP_CANDIDATE |
-| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.828284 | 0.018306 | 0.826816 | 0.853933 | 0.814607 | 0.803371 | 0.842697 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | KEEP_CANDIDATE |
-| GradientBoostingClassifier | gb_raw_tabular_median | raw_tabular | existing unscaled_tree preprocessing: numeric median imputation; categorical most_frequent + one-hot | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 0.329966 | gb_raw_tabular_median | 0 | 0.0 | 0 | 0 | 0 | BASELINE_REFERENCE |
+| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GradientBoostingClassifier | gb_raw_tabular_median | raw_tabular | existing unscaled_tree preprocessing: numeric median imputation; categorical most_frequent + one-hot | 0.825701 | 0.021513 | 0.82716 | 0.329966 | gb_raw_tabular_median | 0 | 0.0 | 0 | 0 | 0 | BASELINE_REFERENCE |
+| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.822893 | 0.021439 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | DEFERRED |
+| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.818854 | 0.022204 | 0.832772 | 0.328844 | gb_raw_tabular_median | 33 | 3.703704 | 19 | 14 | 5 | DEFERRED |
+| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_BASELINE_REFERENCE |
+| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
 
 ## Diagnostics
 
 ### GradientBoostingClassifier primary lane
 
-| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | gb_raw_tabular_median | raw_tabular | existing unscaled_tree preprocessing: numeric median imputation; categorical most_frequent + one-hot | 0.827161 | 0.020218 | 0.826816 | 0.859551 | 0.808989 | 0.803371 | 0.837079 | 0.82716 | 0.329966 | gb_raw_tabular_median | 0 | 0.0 | 0 | 0 | 0 | BASELINE_REFERENCE |
-| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.828284 | 0.018306 | 0.826816 | 0.853933 | 0.814607 | 0.803371 | 0.842697 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | KEEP_CANDIDATE |
-| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.83389 | 0.02349 | 0.837989 | 0.837079 | 0.825843 | 0.797753 | 0.870787 | 0.833895 | 0.329966 | gb_raw_tabular_median | 34 | 3.815937 | 20 | 14 | 6 | KEEP_CANDIDATE |
+| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GradientBoostingClassifier | gb_raw_tabular_median | raw_tabular | existing unscaled_tree preprocessing: numeric median imputation; categorical most_frequent + one-hot | 0.825701 | 0.021513 | 0.82716 | 0.329966 | gb_raw_tabular_median | 0 | 0.0 | 0 | 0 | 0 | BASELINE_REFERENCE |
+| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.822893 | 0.021439 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | DEFERRED |
+| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.818854 | 0.022204 | 0.832772 | 0.328844 | gb_raw_tabular_median | 33 | 3.703704 | 19 | 14 | 5 | DEFERRED |
 
 ### HistGradientBoostingClassifier native-missing diagnostic lane
 
-| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_BASELINE_REFERENCE |
-| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
+| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_BASELINE_REFERENCE |
+| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
 
 ### HistGB best vs GB median baseline cross-reference
 
-| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | gb_raw_tabular_median | 70 | 7.856341 | 40 | 30 | 10 | CROSS_REFERENCE_ONLY |
+| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| HistGradientBoostingClassifier | histgb_raw_tabular_nan_native | raw_tabular | native NaN lane: Age kept as NaN; pandas categorical dtypes with categorical_features="from_dtype" | 0.818743 | 0.024026 | 0.838384 | 0.356902 | gb_raw_tabular_median | 70 | 7.856341 | 40 | 30 | 10 | CROSS_REFERENCE_ONLY |
 
 The cross-reference row is diagnostic only and is not automatic acceptance.
 
 ## Decision
 
-| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | fold_1 | fold_2 | fold_3 | fold_4 | fold_5 | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.828284 | 0.018306 | 0.826816 | 0.853933 | 0.814607 | 0.803371 | 0.842697 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | KEEP_CANDIDATE |
-| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.83389 | 0.02349 | 0.837989 | 0.837079 | 0.825843 | 0.797753 | 0.870787 | 0.833895 | 0.329966 | gb_raw_tabular_median | 34 | 3.815937 | 20 | 14 | 6 | KEEP_CANDIDATE |
-| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.838359 | 0.029501 | 0.860335 | 0.859551 | 0.792135 | 0.814607 | 0.865169 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
+| model_name | variant | feature_set | preprocessing_strategy | cv_mean | cv_std | oof_accuracy | pred_1_rate | base_variant | changed_predictions_vs_base | changed_pct_vs_base | rescue_count | kill_count | net_correct_delta | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GradientBoostingClassifier | gb_raw_plus_agemissing_median | raw_plus_agemissing | AgeMissing created before imputation; Age remains median-imputed; categorical handling matches baseline | 0.822893 | 0.021439 | 0.828283 | 0.328844 | gb_raw_tabular_median | 9 | 1.010101 | 5 | 4 | 1 | DEFERRED |
+| GradientBoostingClassifier | gb_raw_age_sentinel_plus_agemissing | raw_plus_agemissing | AgeMissing created before fill; missing Age replaced with sentinel -1; other numeric missing handling remains safe | 0.818854 | 0.022204 | 0.832772 | 0.328844 | gb_raw_tabular_median | 33 | 3.703704 | 19 | 14 | 5 | DEFERRED |
+| HistGradientBoostingClassifier | histgb_raw_plus_agemissing_nan_native | raw_plus_agemissing | native NaN lane: Age kept as NaN; AgeMissing added; categorical handling matches HistGB native-NaN reference | 0.818743 | 0.024026 | 0.838384 | 0.356902 | histgb_raw_tabular_nan_native | 0 | 0.0 | 0 | 0 | 0 | DIAGNOSTIC_ONLY |
 
 Decision status definitions:
 
@@ -115,6 +115,6 @@ Decision status definitions:
 
 ## Next step recommendation
 
-- Review `gb_raw_age_sentinel_plus_agemissing` as the only possible GB missing-handling candidate. Do not create a submission or checkpoint without an explicit frozen-checkpoint decision.
+- Do not checkpoint Age missing handling from this report alone. The primary GB missing-handling variants did not produce a clear keep signal.
 - No submission should be created from this step.
 - If a later frozen checkpoint is considered, it needs explicit review and a fixed candidate list before any public score.

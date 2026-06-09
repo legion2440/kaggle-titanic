@@ -13,7 +13,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -93,11 +93,6 @@ CSV_COLUMNS = [
     "features",
     "cv_mean",
     "cv_std",
-    "fold_1",
-    "fold_2",
-    "fold_3",
-    "fold_4",
-    "fold_5",
     "oof_accuracy",
     "oof_accuracy_delta_vs_raw_tabular",
     "oof_changed_rows",
@@ -259,13 +254,14 @@ def _evaluate_variant(
     oof = np.full(len(train), -1, dtype=int)
 
     try:
-        for train_idx, valid_idx in splits:
+        for i, (train_idx, valid_idx) in enumerate(splits):
             estimator, _, build_error = _build_estimator(variant.features)
             if estimator is None:
                 raise RuntimeError(build_error)
             estimator.fit(train[variant.features].iloc[train_idx], y.iloc[train_idx])
             fold_pred = estimator.predict(train[variant.features].iloc[valid_idx]).astype(int)
-            oof[valid_idx] = fold_pred
+            if i < 5:
+                oof[valid_idx] = fold_pred
             fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
     except Exception as exc:
         return {
@@ -443,11 +439,6 @@ def _comparison_rows(
                 "features": ", ".join(variant.features),
                 "cv_mean": _round_float(result["cv_mean"]),
                 "cv_std": _round_float(result["cv_std"]),
-                "fold_1": _round_float(result["fold_scores"][0]),
-                "fold_2": _round_float(result["fold_scores"][1]),
-                "fold_3": _round_float(result["fold_scores"][2]),
-                "fold_4": _round_float(result["fold_scores"][3]),
-                "fold_5": _round_float(result["fold_scores"][4]),
                 "oof_accuracy": _round_float(result["oof_accuracy"]),
                 "oof_accuracy_delta_vs_raw_tabular": _round_float(oof_delta),
                 "oof_changed_rows": int(changed.sum()),
@@ -835,8 +826,8 @@ def main() -> None:
     test = _add_farelog(test_raw)
     y = train[TARGET].astype(int)
 
-    splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-    splits = list(splitter.split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
 
     results = {
         variant.variant: _evaluate_variant(variant, train, splits, y)

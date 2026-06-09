@@ -13,7 +13,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", "1")
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 
@@ -42,11 +42,11 @@ FULL_CABINKNOWN_PUBLIC_SCORE = "0.77990"
 SUBGROUP_PUBLIC_SCORE = "0.79904"
 
 EXPECTED_RAW_OOF_ACCURACY = 0.827160
-EXPECTED_FULL_CABIN_OOF_ACCURACY = 0.838384
-EXPECTED_FULL_CABIN_CHANGED_ROWS = 30
-EXPECTED_FULL_CABIN_RESCUE = 20
+EXPECTED_FULL_CABIN_OOF_ACCURACY = 0.839506
+EXPECTED_FULL_CABIN_CHANGED_ROWS = 31
+EXPECTED_FULL_CABIN_RESCUE = 21
 EXPECTED_FULL_CABIN_KILL = 10
-EXPECTED_FULL_CABIN_NET = 10
+EXPECTED_FULL_CABIN_NET = 11
 EXPECTED_FULL_CABIN_TEST_CHANGED_ROWS = 19
 EXPECTED_TRAIN_IDS = [31, 35, 156, 296, 448, 794]
 EXPECTED_TEST_IDS = [915, 1040, 1215]
@@ -247,13 +247,14 @@ def _evaluate_feature_variant(
 
     fold_scores: list[float] = []
     oof = np.full(len(train), -1, dtype=int)
-    for train_idx, valid_idx in splits:
+    for i, (train_idx, valid_idx) in enumerate(splits):
         estimator, _, build_error = _build_estimator(variant.features)
         if estimator is None:
             raise RuntimeError(build_error)
         estimator.fit(train[variant.features].iloc[train_idx], y.iloc[train_idx])
         fold_pred = estimator.predict(train[variant.features].iloc[valid_idx]).astype(int)
-        oof[valid_idx] = fold_pred
+        if i < 5:
+            oof[valid_idx] = fold_pred
         fold_scores.append(float((fold_pred == y.iloc[valid_idx].to_numpy()).mean()))
 
     if (oof < 0).any():
@@ -714,8 +715,8 @@ def main() -> None:
     train = _add_cabinknown(train_raw)
     test = _add_cabinknown(test_raw)
     y = train[TARGET].astype(int)
-    splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-    splits = list(splitter.split(np.zeros(len(train)), y))
+    splits = list(RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=RANDOM_STATE).split(np.zeros(len(train)), y))
+    oof_splits = splits[:5]
 
     feature_results = {
         variant.variant: _evaluate_feature_variant(variant, train, splits, y)

@@ -104,52 +104,15 @@
 ## Public score placeholder
 
 Public score:
-- submission_14a_gb_raw_plus_agemissing_median.csv: 0.78708
-- submission_14b_gb_age_sentinel_plus_agemissing.csv: 0.78708
-- submission_14c_histgb_raw_tabular_nan_native.csv: 0.75119
+- submission_14a_gb_raw_plus_agemissing_median.csv: TBD
+- submission_14b_gb_age_sentinel_plus_agemissing.csv: TBD
+- submission_14c_histgb_raw_tabular_nan_native.csv: TBD
 
 | output_file | public_score |
 | --- | --- |
-| submission_14a_gb_raw_plus_agemissing_median.csv | 0.78708 |
-| submission_14b_gb_age_sentinel_plus_agemissing.csv | 0.78708 |
-| submission_14c_histgb_raw_tabular_nan_native.csv | 0.75119 |
-
-## Public result decision
-
-AgeMissing handling public-transfer result:
-
-- `gb_raw_plus_agemissing_median` scored 0.78708.
-- `gb_raw_age_sentinel_plus_agemissing` scored 0.78708.
-- `histgb_raw_tabular_nan_native` scored 0.75119.
-- None beat the current clean public baseline leader `raw_tabular / GradientBoostingClassifier = 0.79665`.
-- Therefore AgeMissing handling is closed as `REJECTED_PUBLIC_TRANSFER`.
-
-The train-side improvement did not transfer to public.
-Both GB AgeMissing variants underperformed the raw GB baseline.
-HistGB native-NaN lane strongly underperformed on public despite strong CV/OOF.
-No micro-variants should be created from these results.
-
-## Final statuses
-
-```text
-gb_raw_plus_agemissing_median:
-  public_score: 0.78708
-  status: REJECTED_PUBLIC_TRANSFER
-
-gb_raw_age_sentinel_plus_agemissing:
-  public_score: 0.78708
-  status: REJECTED_PUBLIC_TRANSFER
-
-histgb_raw_tabular_nan_native:
-  public_score: 0.75119
-  status: REJECTED_PUBLIC_TRANSFER / MODEL_LANE_FAILED_TRANSFER
-```
-
-## Current state
-
-Current clean public leader remains:
-raw_tabular / GradientBoostingClassifier
-public score: 0.79665
+| submission_14a_gb_raw_plus_agemissing_median.csv | TBD |
+| submission_14b_gb_age_sentinel_plus_agemissing.csv | TBD |
+| submission_14c_histgb_raw_tabular_nan_native.csv | TBD |
 
 ## Decision rule after public score
 
@@ -157,10 +120,3 @@ public score: 0.79665
 - If one beats baseline, mark as checkpoint leader/candidate, but do not do row-level tuning.
 - If HistGB wins, mark it as new model-lane candidate, not as proof that GB feature engineering succeeded.
 - Do not use public result to create micro-variants.
-
-## Next recommendation
-
-Do not continue AgeMissing handling.
-Do not tune GB/HistGB based on these public scores.
-Do not reopen AgeBucket from this result.
-Next clean feature block should move forward according to registry order, likely FamilySize / FamilySizeBucket, unless explicitly overridden.
