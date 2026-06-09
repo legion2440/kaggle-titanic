@@ -1,0 +1,5 @@
+split,variant,PassengerId,Survived,raw_tabular_pred,candidate_pred,raw_tabular_correct,candidate_correct,diff_type,Sex,Pclass,Age,SibSp,Parch,Fare,FareLog,Embarked
+train_oof,raw_plus_farelog,331,1,1,0,True,False,kill,female,3,,2,0,23.25,3.188416617383492,Q
+test_full_fit,raw_plus_farelog,913,,1,0,,,test_changed,male,3,9.0,0,1,3.1708,1.428107863933301,S
+train_oof,raw_farelog_replace_fare,331,1,1,0,True,False,kill,female,3,,2,0,23.25,3.188416617383492,Q
+test_full_fit,raw_farelog_replace_fare,913,,1,0,,,test_changed,male,3,9.0,0,1,3.1708,1.428107863933301,S

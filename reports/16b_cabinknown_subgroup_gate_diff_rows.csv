@@ -1,0 +1,10 @@
+split,variant,PassengerId,Survived,raw_tabular_pred,raw_plus_cabinknown_pred,gated_pred,raw_tabular_correct,gated_correct,diff_type,direction,Sex,Pclass,Age,SibSp,Parch,Fare,Cabin,CabinKnown,Embarked
+train_oof,male_pclass1_cabin_unknown_downshift,31,0,1,0,0,False,True,rescue,downshift_1_to_0,male,1,40.0,0,0,27.7208,,0,C
+train_oof,male_pclass1_cabin_unknown_downshift,35,0,1,0,0,False,True,rescue,downshift_1_to_0,male,1,28.0,1,0,82.1708,,0,C
+train_oof,male_pclass1_cabin_unknown_downshift,156,0,1,0,0,False,True,rescue,downshift_1_to_0,male,1,51.0,0,1,61.3792,,0,C
+train_oof,male_pclass1_cabin_unknown_downshift,296,0,1,0,0,False,True,rescue,downshift_1_to_0,male,1,,0,0,27.7208,,0,C
+train_oof,male_pclass1_cabin_unknown_downshift,448,1,1,0,0,True,False,kill,downshift_1_to_0,male,1,34.0,0,0,26.55,,0,S
+train_oof,male_pclass1_cabin_unknown_downshift,794,0,1,0,0,False,True,rescue,downshift_1_to_0,male,1,,0,0,30.6958,,0,C
+test_full_fit,male_pclass1_cabin_unknown_downshift,915,,1,0,0,,,test_changed,downshift_1_to_0,male,1,21.0,0,1,61.3792,,0,C
+test_full_fit,male_pclass1_cabin_unknown_downshift,1040,,1,0,0,,,test_changed,downshift_1_to_0,male,1,,0,0,26.55,,0,S
+test_full_fit,male_pclass1_cabin_unknown_downshift,1215,,1,0,0,,,test_changed,downshift_1_to_0,male,1,33.0,0,0,26.55,,0,S

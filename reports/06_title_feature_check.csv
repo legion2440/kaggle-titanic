@@ -1,0 +1,13 @@
+status,feature_set,model,preprocessing_mode,cv_mean,cv_std,cv_min,cv_max,fold_scores,error
+ok,f00_core,SVC,scaled_linear,0.811443,0.017667,0.786517,0.837079,"[0.815642, 0.797753, 0.786517, 0.837079, 0.820225]",
+ok,f00_core,GradientBoostingClassifier,unscaled_tree,0.811443,0.017667,0.786517,0.837079,"[0.815642, 0.797753, 0.786517, 0.837079, 0.820225]",
+ok,f00_core,CatBoostClassifier,unscaled_tree,0.811443,0.017667,0.786517,0.837079,"[0.815642, 0.797753, 0.786517, 0.837079, 0.820225]",
+ok,f00_core_plus_title,SVC,scaled_linear,0.820426,0.006167,0.808989,0.825843,"[0.821229, 0.820225, 0.808989, 0.825843, 0.825843]",
+ok,f00_core_plus_title,GradientBoostingClassifier,unscaled_tree,0.81595,0.007933,0.804469,0.825843,"[0.804469, 0.820225, 0.808989, 0.825843, 0.820225]",
+ok,f00_core_plus_title,CatBoostClassifier,unscaled_tree,0.817074,0.008809,0.804469,0.825843,"[0.804469, 0.820225, 0.808989, 0.825843, 0.825843]",
+ok,raw_tabular,SVC,scaled_linear,0.821518,0.019504,0.792135,0.849162,"[0.849162, 0.808989, 0.792135, 0.831461, 0.825843]",
+ok,raw_tabular,GradientBoostingClassifier,unscaled_tree,0.827161,0.020218,0.803371,0.859551,"[0.826816, 0.859551, 0.808989, 0.803371, 0.837079]",
+ok,raw_tabular,CatBoostClassifier,unscaled_tree,0.835001,0.018107,0.803371,0.849162,"[0.849162, 0.848315, 0.803371, 0.825843, 0.848315]",
+ok,raw_plus_title,SVC,scaled_linear,0.837254,0.018175,0.814607,0.865169,"[0.843575, 0.820225, 0.814607, 0.842697, 0.865169]",
+ok,raw_plus_title,GradientBoostingClassifier,unscaled_tree,0.839489,0.010651,0.825843,0.854749,"[0.854749, 0.837079, 0.831461, 0.825843, 0.848315]",
+ok,raw_plus_title,CatBoostClassifier,unscaled_tree,0.84286,0.010835,0.825843,0.854749,"[0.854749, 0.853933, 0.825843, 0.837079, 0.842697]",
